@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-background: 238 230 219;
+    --color-foreground-300: 167 161 154;
+    --color-foreground-800: 51 51 51;
+    --color-foreground: 35 35 35;
+    --color-link: 35 70 200;
+  }
+  body {
+    @apply text-foreground bg-background;
+  }
+
+  hr {
+    border-color: theme("colors.foreground.300");
+  }
+}
+
+@layer utilities {
+  .text-title {
+    @apply font-display text-foreground-800 tracking-wider;
+    font-variation-settings: "wght" 663;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-screen-lg px-12 mx-auto;
+    &.no-padding {
+      @apply px-0;
+    }
+  }
+
+  .prose-container {
+    @apply prose max-w-screen-sm mx-auto;
+
+    a {
+      @apply text-link no-underline;
+    }
+  }
+}
