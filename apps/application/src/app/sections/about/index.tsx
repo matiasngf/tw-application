@@ -55,7 +55,7 @@ export const About = () => {
           , an event held at the Congress. I built a beautiful production team
           and gathered some fantastic speakers.
         </p>
-        <figure className="md:hidden relative">
+        <figure className="relative">
           <div className="font-bold absolute text-background left-[54%] top-[31%] -rotate-45">
             {"←"} me!
           </div>

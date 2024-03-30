@@ -8,6 +8,7 @@ import { Branch, BranchUniformParmas } from "./components/plants/branch";
 import { useUniforms } from "./hooks/use-uniforms";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { Cat } from "./components/cat";
 
 export const InnerScene = () => {
   const aspect = useThree((s) => s.viewport.aspect);
@@ -45,12 +46,15 @@ export const InnerScene = () => {
         scrollTrigger: {
           trigger: "body",
           start: "top top",
-          end: "bottom top",
+          end: "bottom bottom",
           scrub: true,
         },
+        ease: "none",
         progress: 1,
         onUpdate: () => {
           const bodyHeight = document.body.clientHeight;
+          console.log(bodyHeight, p.progress);
+
           cameraRef.position.y = -p.progress * (bodyHeight / 500);
         },
       });
@@ -86,25 +90,39 @@ export const InnerScene = () => {
         scale={0.8 * aspect}
         rotation={[0, Math.PI, 0]}
         position={[aspect * 1.5, -0.7, 0]}
-        variant={2}
+        variant={4}
         uniforms={bUnifoms}
-        branchlets={10}
+        branchlets={17}
       />
 
-      <spotLight
-        ref={lightRef}
-        position={[0, 5, 5]}
-        intensity={100}
-        castShadow
-        angle={0.2}
-        penumbra={0.3}
+      <Branch
+        scale={0.8 * aspect}
+        rotation={[0, 0, Math.PI * -0.1]}
+        position={[-aspect * 1.48, -2, 0]}
+        variant={3}
+        uniforms={bUnifoms}
+        branchlets={17}
       />
-      <ambientLight intensity={0} />
 
-      {/* <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[1, 20, 20]} />
-        <meshPhysicalMaterial color="white" />
-      </mesh> */}
+      <Cat position={[-aspect, -4, 0]} scale={[0.04, 0.04, 0.04]} />
+
+      <Branch
+        scale={0.8 * aspect}
+        rotation={[0, Math.PI, 0]}
+        position={[aspect * 1.5, -4, 0]}
+        variant={4}
+        uniforms={bUnifoms}
+        branchlets={17}
+      />
+
+      <Branch
+        scale={0.8 * aspect}
+        rotation={[0, 0, Math.PI * -0.1]}
+        position={[-aspect * 1.48, -6, 0]}
+        variant={4}
+        uniforms={bUnifoms}
+        branchlets={17}
+      />
     </>
   );
 };

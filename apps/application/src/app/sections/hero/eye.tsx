@@ -5,28 +5,22 @@ import { valueRemap } from "@/lib/math/value-remap";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Vector2 } from "three";
 import s from "./hero.module.css";
-import gsap from "gsap";
+import { lerp } from "@/lib/math/lerp";
+import { clx } from "@/hooks/clx";
 
 export const Eye = () => {
-  const [eyeContainer, setEyeContainer] = useState<HTMLSpanElement | null>(
-    null
-  );
+  const eyePosTarget = useRef({ x: 0, y: 0 });
+  const eyePos = useRef({ x: 0, y: 0 });
+
+  const mouseStartedRef = useRef(false);
+
   const dotContainerRef = useRef<HTMLSpanElement | null>(null);
   const dotRef = useRef<HTMLSpanElement | null>(null);
 
-  const onMouseStart = useCallback(() => {
-    const dot = dotRef.current;
-    if (!dot || !eyeContainer) return;
-
-    gsap.to(eyeContainer, {
-      "--blink": 1,
-      duration: 0.3,
-      delay: 0.7,
-      ease: "power2.out",
-    });
-  }, [eyeContainer]);
-
-  const mouseRef = useMouse({ lerp: 0.5, onStart: onMouseStart });
+  const mouseRef = useMouse({
+    lerp: 1,
+    onStart: () => (mouseStartedRef.current = true),
+  });
 
   const {
     mouseVec,
@@ -51,7 +45,7 @@ export const Eye = () => {
     const dotContainer = dotContainerRef.current;
     const dot = dotRef.current;
 
-    if (!dotContainer || !dot) return;
+    if (!dotContainer || !dot || !mouseStartedRef.current) return;
     mouseVec.set(mouseRef.current.x, mouseRef.current.y);
     windowVec.set(window.innerWidth, window.innerHeight);
     const rect = dotContainer.getBoundingClientRect();
@@ -76,13 +70,19 @@ export const Eye = () => {
       toMouseVec.y = Math.min(toMouseVec.y, ovalFactor);
     }
 
-    dot.style.setProperty("--translate-x", `${toMouseVec.x}em`);
-    dot.style.setProperty("--translate-y", `${toMouseVec.y}em`);
-  }, [mouseRef, dotContainerRef]);
+    eyePosTarget.current.x = toMouseVec.x;
+    eyePosTarget.current.y = toMouseVec.y;
+
+    //lerp current position to target position
+    eyePos.current.x = lerp(eyePos.current.x, eyePosTarget.current.x, 0.1);
+    eyePos.current.y = lerp(eyePos.current.y, eyePosTarget.current.y, 0.1);
+
+    dot.style.setProperty("--translate-x", `${eyePos.current.x}em`);
+    dot.style.setProperty("--translate-y", `${eyePos.current.y}em`);
+  });
 
   return (
     <span
-      ref={setEyeContainer}
       style={
         {
           "--blink": 0, // 0 closed, 1 open
@@ -90,7 +90,7 @@ export const Eye = () => {
           fontVariationSettings: '"wght" var(--weight)',
         } as unknown as React.CSSProperties
       }
-      className="w-[0.72em] inline-block relative "
+      className="eye-container w-[0.72em] inline-block relative"
     >
       o
       <span
@@ -98,7 +98,7 @@ export const Eye = () => {
         className="block absolute w-[0.7em] h-[0.68em] top-[0.32em] left-0"
       >
         <span ref={dotRef} className={s.dot}>
-          <span className={s["dot-shape"]}></span>
+          <span className={clx(s["dot-shape"], "dot-shape")}></span>
         </span>
       </span>
     </span>

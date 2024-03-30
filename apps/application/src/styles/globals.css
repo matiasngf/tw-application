@@ -12,6 +12,12 @@
   }
   body {
     @apply text-foreground bg-background;
+
+    &:has(a:hover) {
+      .dot-shape {
+        --scale: 1.5 !important;
+      }
+    }
   }
 
   hr {

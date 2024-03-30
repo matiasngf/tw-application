@@ -48,6 +48,13 @@ export function Hero({ children }: PropsWithChildren) {
         "-=0.2"
       );
 
+      tl.to(".eye-container", {
+        "--blink": 1,
+        duration: 0.3,
+        delay: 0.7,
+        ease: "power2.out",
+      });
+
       const revealTl = gsap.timeline({
         scrollTrigger: {
           trigger: container,

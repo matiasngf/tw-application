@@ -1,8 +1,6 @@
+import { lerp } from '@/lib/math/lerp';
 import gsap from 'gsap';
 import { useEffect, useRef } from 'react';
-
-const lerp = (start: number, end: number, t: number): number =>
-  start * (1 - t) + end * t;
 
 export interface UseMouseParams {
   lerp?: number;
@@ -63,7 +61,7 @@ export const useMouse = ({ lerp: lerpValue = 1, onStart }: UseMouseParams) => {
     return (): void => {
       window.removeEventListener('mousemove', onMouseMove);
     };
-  }, [mouseRef, mouseTargetRef, lerpValue, onStart]);
+  }, [mouseRef, mouseTargetRef, lerpValue]);
 
   return mouseRef;
 };

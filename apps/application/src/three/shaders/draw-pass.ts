@@ -1,12 +1,16 @@
 import { ShaderMaterial, Texture } from "three"
 import { ShaderPass } from "three-stdlib"
+import { noise2 } from "./frags/noise"
 
 const drawVertexShader = /*glsl*/`
+uniform vec2 resolution;
 
 varying vec2 vUv;
+varying vec2 vAspectUV;
 
 void main() {
   vUv = uv;
+  vAspectUV = uv * vec2(resolution.x / resolution.y, 1.0);
   gl_Position = vec4(position, 1.0);
 }
 `
@@ -20,6 +24,9 @@ uniform vec2 resolution;
 #define PI 3.14159265359
 
 varying vec2 vUv;
+varying vec2 vAspectUV;
+
+${noise2}
 
 float valueRemap(float value, float low1, float high1, float low2, float high2) {
   return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
@@ -46,8 +53,6 @@ float luminance(vec3 color) {
 
 float crossHatch(vec2 uv, float lum) {
   float aspect = resolution.x / resolution.y;
-  uv *= 70.;
-  uv.x *= aspect;
 
   float lineDensity = 0.; // Increase lines in darker areas
   float count = 30.0; // Number of line sets, adjust for finer/coarser hatching
@@ -68,7 +73,6 @@ float crossHatch(vec2 uv, float lum) {
     }
 
     float angleVariation = valueRemap(lum, 0., 1., 0.95, 1.0);
-    // float angleVariation = 1.;
 
     float angle = baseAngle + (PI * angleVariation) / count * i; // Rotate each set of lines
 
@@ -89,27 +93,64 @@ float crossHatch(vec2 uv, float lum) {
   return lineDensity;
 }
 
-void main() {
+
+// original
+vec3 getDraw() {
+
   vec4 texColor = texture2D(baseTexture, vUv);
   
   float lum = luminance(texColor.rgb);
   float originalLum = lum;
-  
   lum = contrast(lum, 1.2);
   lum = brightness(lum, 3.0);
-  // lum = pow(lum, 0.5);
-  float hatch = crossHatch(vUv, lum);
+
+  float hatch = crossHatch(vAspectUV * 70., lum);
   hatch = 1. - (hatch * 0.5);
 
   vec3 finalColor = vec3(originalLum * 2.5 * hatch);
-
+  
+  // add color
   finalColor = mix(finalColor, texColor.rgb, 0.4 * hatch);
 
+  return finalColor;
+}
+
+vec3 getDraw2() {
+
+  vec4 texColor = texture2D(baseTexture, vUv);
+
+  bool hasColor = abs(texColor.r - texColor.g) > 0.05 || abs(texColor.r - texColor.b) > 0.05;
   
-  gl_FragColor = vec4(finalColor, 1.0);
+  float lum = luminance(texColor.rgb);
+  float originalLum = lum;
 
+  lum = valueRemap(lum, 0., 0.4, 0., 1.);
+  float hatchFactor = crossHatch(vAspectUV * 100., lum);
+  float hatch = 1. - hatchFactor;
 
+  float n = cnoise(vAspectUV * 900.) * .5 + .5;
+  float penShade = originalLum + n;
+  penShade = clamp(penShade, 0., 1.);
+
+  float f = penShade * hatch;
+
+  vec3 penColor;
+
+  if(hasColor) {
+    penColor = mix(texColor.rgb, vec3(1), f);
+  } else {
+    penColor = mix(texColor.rgb, vec3(1), f) * hatch;
+  }
+
+  return vec3(penColor);
+
+}
+
+void main() {
+  gl_FragColor.rgb = getDraw2();
+  // DEBUG
   // gl_FragColor.rgb = vec3(lum);
+  // gl_FragColor.rgb = vec3(originalLum);
   // gl_FragColor.rgb = texColor.rgb;
   gl_FragColor.a = 1.;
 }

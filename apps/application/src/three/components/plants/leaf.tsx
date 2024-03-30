@@ -102,7 +102,7 @@ export const Leaf = ({ branchletPath, uniforms, t }: LeafProps) => {
         branchletProgress
       );
       const branchCurrentDirection = curve.getTangentAt(branchletProgress);
-      branchDirection.lerp(branchCurrentDirection, 0.2);
+      branchDirection.lerp(branchCurrentDirection, 0.01);
       modelNode.position.copy(point);
       helper.position.copy(point);
 
