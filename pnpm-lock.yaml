@@ -61,6 +61,7 @@ importers:
       three-stdlib: ^2.29.6
       ts-loader: ^9.4.2
       typescript: ^5.4.3
+      zustand: ^4.5.2
     dependencies:
       '@gsap/react': 2.1.0
       '@mdx-js/loader': 3.0.1_webpack@5.91.0
@@ -84,6 +85,7 @@ importers:
       tailwindcss-text-scale: 0.3.0_tailwindcss@3.4.3
       three: 0.162.0
       three-stdlib: 2.29.6_three@0.162.0
+      zustand: 4.5.2_4aprenwzvd25d3zno6rr4bqbqq
     devDependencies:
       '@tailwindcss/typography': 0.5.12_tailwindcss@3.4.3
       '@tw-application/eslint-config-custom': link:../../packages/eslint-config-custom

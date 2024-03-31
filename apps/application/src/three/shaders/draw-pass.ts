@@ -4,13 +4,21 @@ import { noise2 } from "./frags/noise"
 
 const drawVertexShader = /*glsl*/`
 uniform vec2 resolution;
+uniform float cameraY;
 
 varying vec2 vUv;
+varying vec2 translatedUv;
 varying vec2 vAspectUV;
+varying vec2 translatedAspectUV;
 
 void main() {
+  float translateFactor = 0.3;
+  float aspect = resolution.x / resolution.y;
   vUv = uv;
-  vAspectUV = uv * vec2(resolution.x / resolution.y, 1.0);
+  translatedUv = uv + vec2(0.0, cameraY * translateFactor);
+  vAspectUV = uv * vec2(aspect, 1.0);
+  translatedAspectUV = translatedUv * vec2(aspect, 1.0);
+
   gl_Position = vec4(position, 1.0);
 }
 `
@@ -24,7 +32,10 @@ uniform vec2 resolution;
 #define PI 3.14159265359
 
 varying vec2 vUv;
+varying vec2 translatedUv;
 varying vec2 vAspectUV;
+varying vec2 translatedAspectUV;
+
 
 ${noise2}
 
@@ -125,10 +136,10 @@ vec3 getDraw2() {
   float originalLum = lum;
 
   lum = valueRemap(lum, 0., 0.4, 0., 1.);
-  float hatchFactor = crossHatch(vAspectUV * 100., lum);
+  float hatchFactor = crossHatch(translatedAspectUV * 100., lum);
   float hatch = 1. - hatchFactor;
 
-  float n = cnoise(vAspectUV * 900.) * .5 + .5;
+  float n = cnoise(translatedAspectUV * 900.) * .5 + .5;
   float penShade = originalLum + n;
   penShade = clamp(penShade, 0., 1.);
 
@@ -163,7 +174,8 @@ export const getDrawPass = (baseTexture: Texture) => {
     uniforms: {
       baseTexture: { value: baseTexture },
       time: { value: 1 },
-      resolution: { value: [1920, 1080] }
+      resolution: { value: [1920, 1080] },
+      cameraY: { value: 0 },
     }
   })
 

@@ -9,6 +9,19 @@ import { useUniforms } from "./hooks/use-uniforms";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Cat } from "./components/cat";
+import { create } from "zustand";
+
+export interface InnerSceneStore {
+  cameraRef: {
+    current: ThreeCamera | null;
+  };
+}
+
+export const useInnerScene = create<InnerSceneStore>(() => ({
+  cameraRef: {
+    current: null,
+  },
+}));
 
 export const InnerScene = () => {
   const aspect = useThree((s) => s.viewport.aspect);
@@ -67,6 +80,7 @@ export const InnerScene = () => {
       <PerspectiveCamera
         ref={(r) => {
           if (r) {
+            useInnerScene.getState().cameraRef.current = r;
             setCameraRef(r);
           }
         }}
@@ -76,16 +90,16 @@ export const InnerScene = () => {
       />
 
       <Branch
-        scale={Math.max(0.8 * aspect, 1.5)}
-        rotation={[0, 0, Math.PI * -0.1]}
-        position={[-aspect * 1.7, 1, 0]}
+        scale={Math.max(1 * aspect, 1.5)}
+        rotation={[0, 0, Math.PI * -0.03]}
+        position={[-aspect * 1.7, 0.85, 0]}
         variant={0}
         uniforms={bUnifoms}
         branchlets={17}
       />
 
       <Branch
-        scale={Math.max(0.8 * aspect, 1.5)}
+        scale={Math.max(1 * aspect, 1.5)}
         rotation={[0, Math.PI, 0]}
         position={[aspect * 1.5, -0.7, 0]}
         variant={4}

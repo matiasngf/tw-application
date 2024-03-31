@@ -1,28 +1,21 @@
 "use client";
 
-import {
-  Color,
-  SpotLight,
-  PerspectiveCamera as ThreeCamera,
-  WebGLRenderTarget,
-} from "three";
+import { WebGLRenderTarget } from "three";
 import { RenderTexture } from "./components/render-texture";
-import { useMemo, useRef } from "react";
-import { PerspectiveCamera } from "@react-three/drei";
+import { useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { EffectComposer, TexturePass } from "three-stdlib";
+import { EffectComposer } from "three-stdlib";
 import { getDrawPass } from "./shaders/draw-pass";
-import { InnerScene } from "./inner-scene";
+import { InnerScene, useInnerScene } from "./inner-scene";
 
 export const Renderer = () => {
   const gl = useThree((s) => s.gl);
   const mainFbo = useMemo(() => new WebGLRenderTarget(), []);
 
+  const innerCameraRef = useInnerScene((s) => s.cameraRef);
+
   const renderer = useMemo(() => {
     const composer = new EffectComposer(gl);
-    // const renderScene = new TexturePass(mainFbo.texture);
-    // composer.addPass(renderScene);
-
     const drawPass = getDrawPass(mainFbo.texture);
     composer.addPass(drawPass);
 
@@ -43,11 +36,16 @@ export const Renderer = () => {
 
     composer.render();
     drawPass.uniforms.resolution.value = [width, height];
+
+    if (innerCameraRef.current) {
+      drawPass.uniforms.cameraY.value = innerCameraRef.current.position.y;
+    }
   }, 1);
 
   return (
     <>
       <RenderTexture
+        renderPriority={1}
         width={resolution.width * pixelRatio}
         height={resolution.height * pixelRatio}
         attach={null}
