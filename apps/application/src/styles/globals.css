@@ -38,17 +38,38 @@
 
 @layer components {
   .container {
-    @apply max-w-screen-lg px-12 mx-auto;
+    @apply max-w-screen-lg px-8 mx-auto;
     &.no-padding {
       @apply px-0;
     }
   }
 
   .prose-container {
-    @apply prose max-w-screen-sm mx-auto;
+    @apply max-w-screen-sm mx-auto;
+  }
 
-    a {
+  .prose {
+    & :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
       @apply text-link no-underline;
     }
+
+    h2 {
+      @apply mb-9 text-scale-5xl/8xl tracking-tighter font-normal text-[#484D2A]
+      font-serif leading-none text-center;
+    }
+
+    h3 {
+      @apply text-scale-2xl/3xl font-serif text-foreground-800;
+    }
+  }
+}
+
+.react-tweet-theme {
+  --tweet-header-line-height: 1.4 !important;
+  --tweet-header-font-size: 14px !important;
+  --tweet-body-font-size: 14px !important;
+  --tweet-body-line-height: 1.1 !important;
+  img {
+    @apply !m-0;
   }
 }

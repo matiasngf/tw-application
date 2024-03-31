@@ -76,7 +76,7 @@ export const InnerScene = () => {
       />
 
       <Branch
-        scale={0.8 * aspect}
+        scale={Math.max(0.8 * aspect, 1.5)}
         rotation={[0, 0, Math.PI * -0.1]}
         position={[-aspect * 1.7, 1, 0]}
         variant={0}
@@ -85,7 +85,7 @@ export const InnerScene = () => {
       />
 
       <Branch
-        scale={0.8 * aspect}
+        scale={Math.max(0.8 * aspect, 1.5)}
         rotation={[0, Math.PI, 0]}
         position={[aspect * 1.5, -0.7, 0]}
         variant={4}

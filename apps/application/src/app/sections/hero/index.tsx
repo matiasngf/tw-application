@@ -128,7 +128,7 @@ export function Hero({ children }: PropsWithChildren) {
           width={80}
         />
       </div>
-      <div className="about-container invisible opacity-0 translate-y-[50px]">
+      <div className="about-container invisible opacity-0 translate-y-[0px]">
         {children}
       </div>
     </div>

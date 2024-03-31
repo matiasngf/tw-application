@@ -1,9 +1,20 @@
+import remarkGfm from 'remark-gfm'
+import nextMdx from '@next/mdx'
+
+const withMDX = nextMdx({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [],
+  },
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // enable mdx
+  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   webpack: (config, options) => {
-
-    // console.log(options.defaultLoaders.babel);
-
+    // add support for .emojs files
     config.module.rules.push({
       test: /\.emojs$/,
       use: [
@@ -18,4 +29,4 @@ const nextConfig = {
   }
 };
 
-export default nextConfig;
+export default withMDX(nextConfig)
