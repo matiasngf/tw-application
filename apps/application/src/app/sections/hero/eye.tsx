@@ -2,10 +2,10 @@ import { useFrame } from "@/hooks/use-frame";
 import { useMouse } from "@/hooks/use-mouse";
 import { rotateVector2 } from "@/lib/math/rotate-vec";
 import { valueRemap } from "@/lib/math/value-remap";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { Vector2 } from "three";
 import s from "./hero.module.css";
-import { lerp } from "@/lib/math/lerp";
+import { lerp } from "@/transpiled/lerp.emojs";
 import { clx } from "@/hooks/clx";
 
 export const Eye = () => {

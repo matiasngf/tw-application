@@ -7,7 +7,8 @@ export const getKeywordsRegex = (keywords: Record<string, string>) => {
       keywordsRegRaw += `(?:${keyword})`;
     }
   });
-  keywordsRegRaw = `^(?:${keywordsRegRaw})`;
+  keywordsRegRaw = `^(?:${keywordsRegRaw})(?!\\w)`;
+
   const keywordsRegex = new RegExp(keywordsRegRaw);
   return keywordsRegex
 }

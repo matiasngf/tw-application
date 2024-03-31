@@ -20,7 +20,7 @@ import {
 } from "@/three/shaders/leaf-shaders";
 import { valueRemap } from "@/lib/math/value-remap";
 import { clamp } from "three/src/math/MathUtils.js";
-import { easeOut } from "@/lib/math/ease";
+import { easeOut } from "@/transpiled/ease.emojs";
 
 export interface LeafProps {
   branchletPath: PathVertices;

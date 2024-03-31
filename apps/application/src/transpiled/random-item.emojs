@@ -1,0 +1,4 @@
+⬆ 💿 randomItem = (items) => {
+    💿 index = 📐.floor(📐.random() * items.length);
+    👈 items[index];
+};

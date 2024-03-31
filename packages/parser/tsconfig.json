@@ -2,7 +2,8 @@
   "compilerOptions": {
     "lib": [
       "es2020",
-      "ESNext"
+      "ESNext",
+      "dom"
     ],
     "target": "es5",
     "module": "commonjs",

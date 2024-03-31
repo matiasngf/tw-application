@@ -53,8 +53,6 @@ export const InnerScene = () => {
         progress: 1,
         onUpdate: () => {
           const bodyHeight = document.body.clientHeight;
-          console.log(bodyHeight, p.progress);
-
           cameraRef.position.y = -p.progress * (bodyHeight / 500);
         },
       });

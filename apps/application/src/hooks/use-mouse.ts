@@ -1,6 +1,10 @@
-import { lerp } from '@/lib/math/lerp';
+"use client"
+
+import { lerp } from '@/transpiled/lerp.emojs';
 import gsap from 'gsap';
 import { useEffect, useRef } from 'react';
+
+
 
 export interface UseMouseParams {
   lerp?: number;

@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "reverse": {
+      "type": "boolean",
+      "description": "If reversew, it will translate from Javascript into EmoJs"
+    }
+  },
+  "additionalProperties": false
+}

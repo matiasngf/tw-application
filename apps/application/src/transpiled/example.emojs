@@ -1,0 +1,11 @@
+⬆ 🤖 isString(str) {
+    🤔 (🧐 str === 'string') {
+        👈 👍;
+    }
+    🤷 {
+        👈 👎;
+    }
+}
+// Comments and strings should not be transpiled ej:
+// export, function, const
+"export function const";

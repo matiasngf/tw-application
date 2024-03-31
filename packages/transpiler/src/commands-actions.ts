@@ -1,42 +1,42 @@
 
 import chalk from 'chalk';
 import { Logger } from './debugger';
-import { RushCompiler } from './compiler';
+import { EmoJSCompiler } from './compiler';
 
-export const dev = (debug: boolean) => {
+export const dev = (reverse: boolean, inputDir: string, outDir: string, debug: boolean, watch: boolean) => {
 
   Logger.setDebugMode(debug);
 
-  const compiler = new RushCompiler({
+  const compiler = new EmoJSCompiler({
+    reverse,
     dev: true,
-    watch: true,
-    compilerDir: '.rush-compiler',
-
-    onStart: (_err, _stats) => {
-      console.log(`${chalk.green('rush-compiler')} compiling`);
+    watch,
+    matchPattern: inputDir + '/**/*.ts',
+    outDir,
+    onStart: () => {
+      console.log(`${chalk.green('emojs-compiler')} starting dev mode`);
     }
   })
 
-  console.log(`${chalk.yellow('rush-compiler')} starting dev mode...`);
   compiler.start()
 
 }
 
-export const build = (debug: boolean) => {
+export const build = (reverse: boolean, inputDir: string, outDir: string, debug: boolean) => {
 
   Logger.setDebugMode(debug);
 
-  const compiler = new RushCompiler({
+  const compiler = new EmoJSCompiler({
+    reverse,
     dev: false,
     watch: false,
-    compilerDir: '.rush-compiler',
-
-    onStart: (_err, _stats) => {
-      console.log(`${chalk.green('rush-compiler')} compiling`);
+    matchPattern: inputDir + '/**/*.ts',
+    outDir,
+    onStart: () => {
+      console.log(`${chalk.green('emojs-compiler')} starting`);
     }
   })
 
-  console.log(`${chalk.yellow('rush-compiler')} starting build`);
   compiler.start()
 
 }

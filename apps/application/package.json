@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "emojs-generate": "emojs-compiler build --input './src/to-transpile' --output './src/transpiled'",
+    "emojs-watch": "emojs-compiler dev -D -W --input './src/to-transpile' --output './src/transpiled'"
   },
   "dependencies": {
     "@gsap/react": "^2.1.0",
@@ -14,6 +16,7 @@
     "@react-three/fiber": "^8.16.0",
     "@studio-freight/lenis": "^1.0.42",
     "@studio-freight/react-lenis": "^0.0.46",
+    "@tw-application/transpiler": "workspace:^0.0.0",
     "clsx": "^2.1.0",
     "gsap": "^3.12.5",
     "leva": "^0.9.35",
@@ -33,12 +36,14 @@
     "@types/react-dom": "^18",
     "@types/three": "^0.162.0",
     "autoprefixer": "^10.4.19",
+    "emojs-loader": "workspace:^1.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",
     "postcss": "^8",
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^12.1.0",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.4.3"
   }
 }

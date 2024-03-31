@@ -1,7 +1,12 @@
 export const jsToEmoji: Record<string, string> = {
   // custom
   'console.log': '📣',
+  'Math': '📐',
+  // typescript
+  'interface': '💀',
+  'type': '🔧',
   // common
+  'from': '🗺️',
   'function': '🤖',
   'return': '👈',
   'if': '🤔',
@@ -9,10 +14,10 @@ export const jsToEmoji: Record<string, string> = {
   'false': '👎',
   'else': '🤷',
   'throw': '🔥',
-  'typeof': '🦴',
-  'const': '💾',
-  'let': '💿',
-  'var': '💽',
+  'typeof': '🧐',
+  'const': '💿',
+  'let': '💽',
+  'var': '💾',
   'static': '🔒',
   'private': '🙈',
   'public': '🙉',
@@ -59,7 +64,6 @@ export const jsToEmoji: Record<string, string> = {
   'goto': 'goto',
   'instanceof': 'instanceof',
   'int': 'int',
-  'interface': 'interface',
   'long': 'long',
   'native': 'native',
   'transient': 'transient',

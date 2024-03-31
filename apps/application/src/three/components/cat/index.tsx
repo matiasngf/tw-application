@@ -16,7 +16,7 @@ import {
 import type { GLTF } from "three-stdlib";
 
 import { catBodyFragmentShader, catBodyVertexShader } from "./cat-body-shader";
-import { randomItem } from "@/lib/math/random-item";
+import { randomItem } from "@/transpiled/random-item.emojs";
 
 interface CatGLTF extends GLTF {
   nodes: {

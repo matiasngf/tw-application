@@ -14,7 +14,8 @@ const libsToExcludeFromCompilation = [
   "handlebars",
   "express",
   "ts-loader",
-  "fork-ts-checker-webpack-plugin"
+  "fork-ts-checker-webpack-plugin",
+  "typescript"
 ]
 
 const config = {
