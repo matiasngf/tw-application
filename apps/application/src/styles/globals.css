@@ -54,7 +54,7 @@
     }
 
     h2 {
-      @apply mb-9 text-scale-5xl/8xl tracking-tighter font-normal text-[#484D2A]
+      @apply mb-16 text-scale-5xl/8xl tracking-tighter font-normal text-[#484D2A]
       font-serif leading-none text-center;
     }
 

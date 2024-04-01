@@ -4,8 +4,10 @@ import Projects from "./projects.mdx";
 
 export const What = () => {
   return (
-    <div className="container prose-container prose">
-      <Projects />
+    <div className="container">
+      <div className=" prose-container prose">
+        <Projects />
+      </div>
     </div>
   );
 };
