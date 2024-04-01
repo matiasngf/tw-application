@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Programming with emojis 🤖
 
-## Getting Started
+You are here! That's great; let's continue down the rabbit hole.
 
-First, run the development server:
+`emojs` is an esoteric language that I created to experiment with a few technologies. It follows the same rules as `javascript`, so it can be transpiled and run by `nodejs`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+If you navigate to [/app/application/src/transpiled](./src/transpiled), you will find `.emojs` files.
+
+Of course, I didn't write the actual code with emojis. I created a folder [to-transpile](./src/transpiled) that contains the original code in typescript. Then, I used a `transpiler` to translate my code from typescript into emojis.
+
+Finally, the `.emojs` files are used all across the application. For example, [lerp.emojs](./src/transpiled/lerp.emojs) is imported in the file [eye.tsx](./src/app/sections/hero/eye.tsx).
+
+Emojs users like to have their code typed, so the transpiler also generates `.d.ts` files to keep the type information, so each time you import a `.emojs` file, you get the correct types.
+
+But why does it work? NextJs uses Webpack to bundle the code, so I created a `Webpack loader` that can transpile `emojs` code into `javascript`.
+
+## In-depth
+
+This experiment is divided into three parts:
+
+### Parser
+
+[Source: /packages/parser](../../packages/parser/)
+
+The main functionality for translating the code is in the parser. It first `tokenizes` the code, recognizing keywords that need to be translated. \*\*It doesn't create an AST, but it gets the job done. It can distinguish between keywords, comments, and strings to avoid translating the wrong parts of code.
+
+| ⚠️ Support for template literals is still missing.
+
+### Transpiler
+
+[Soruce: /packages/transpiler](../../packages/transpiler/)
+
+The transpiler is a `CLI` that can be used to translate an entire folder of files from `typescript` to `emojs`. It contains some options to customize its behavior.
+
+It uses the typescript compiler behind the scenes to parse the code, it also emits `d.ts` files to keep the type information.
+
+Example of usage:
+
+```jsonc
+// /app/application/package.json
+{
+  "scripts": {
+    "emojs-generate": "emojs-compiler build --input './src/to-transpile' --output './src/transpiled'",
+    "emojs-watch": "emojs-compiler dev -D -W --input './src/to-transpile' --output './src/transpiled'",
+  },
+  "devDependencies": {
+    "@tw-application/transpiler": "workspace:^0.0.0",
+  },
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Loader
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+[Source: /packages/emojs-loader](../../packages/emojs-loader/)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+In order to run your emoji code properly, you'll need the `emojs-loader`. This is a `webpack loader` that follows the [standard webpack boilerplate](https://github.com/webpack-contrib/webpack-defaults).
 
-## Learn More
+It can transpile `emojs` code into `javascript` and vice versa.
 
-To learn more about Next.js, take a look at the following resources:
+Usage with nextjs:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm install -D emojs-loader
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+_(The package is not published yet, so you'll need to install it from the root of the monorepo.)_
 
-## Deploy on Vercel
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  webpack: (config, options) => {
+    // add Support for .emojs files
+    config.module.rules.push({
+      test: /\.emojs$/,
+      use: [
+        "babel-loader",
+        {
+          loader: "emojs-loader",
+        },
+      ],
+    });
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    return config;
+  },
+};
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+export default nextConfig;
+```
