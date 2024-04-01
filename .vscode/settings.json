@@ -14,5 +14,8 @@
     "class",
     "className",
     ".*Styles"
-  ]
+  ],
+  "[mdx]": {
+    "editor.wordWrap": "on",
+  }
 }

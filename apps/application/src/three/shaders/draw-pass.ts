@@ -12,7 +12,7 @@ varying vec2 vAspectUV;
 varying vec2 translatedAspectUV;
 
 void main() {
-  float translateFactor = 0.3;
+  float translateFactor = 1.;
   float aspect = resolution.x / resolution.y;
   vUv = uv;
   translatedUv = uv + vec2(0.0, cameraY * translateFactor);
@@ -167,12 +167,12 @@ void main() {
 }
 `
 
-export const getDrawPass = (baseTexture: Texture) => {
+export const getDrawPass = () => {
   const drawMaterial = new ShaderMaterial({
     vertexShader: drawVertexShader,
     fragmentShader: drawFragmentShader,
     uniforms: {
-      baseTexture: { value: baseTexture },
+      baseTexture: { value: null },
       time: { value: 1 },
       resolution: { value: [1920, 1080] },
       cameraY: { value: 0 },
@@ -183,3 +183,5 @@ export const getDrawPass = (baseTexture: Texture) => {
 
   return drawPass
 }
+
+export const DrawPass = getDrawPass()

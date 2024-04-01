@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: JSX.Element }) {
         <link rel="stylesheet" href="https://use.typekit.net/kge0vdc.css?8" />
       </head>
 
-      <body suppressHydrationWarning className="bg-background">
+      <body className="bg-background" suppressHydrationWarning>
         <LenisProvider>{children}</LenisProvider>
       </body>
     </html>

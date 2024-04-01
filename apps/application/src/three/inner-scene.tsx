@@ -10,6 +10,9 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Cat } from "./components/cat";
 import { create } from "zustand";
+import { lerp } from "@/transpiled/lerp.emojs";
+import { useLenis } from "@studio-freight/react-lenis";
+import { DrawPass } from "./shaders/draw-pass";
 
 export interface InnerSceneStore {
   cameraRef: {
@@ -23,8 +26,18 @@ export const useInnerScene = create<InnerSceneStore>(() => ({
   },
 }));
 
+const cameraFov = 40;
+
+function calculateCameraDistance(fovDegrees: number, planeHeight = 1) {
+  const fovRadians = (fovDegrees * Math.PI) / 180;
+  const halfPlaneHeight = planeHeight / 2;
+  const distance = halfPlaneHeight / Math.tan(fovRadians / 2);
+  return distance;
+}
+
 export const InnerScene = () => {
   const aspect = useThree((s) => s.viewport.aspect);
+  const halfAspect = useThree((s) => s.viewport.aspect / 2);
 
   const lightRef = useRef<SpotLight | null>(null);
   const [cameraRef, setCameraRef] = useState<ThreeCamera | null>(null);
@@ -37,7 +50,7 @@ export const InnerScene = () => {
   const [bUnifoms] = useUniforms({
     branchGrowOffset: 0,
     branchRadius: 0.003,
-    progress: 0,
+    progress: 1.5,
   } satisfies BranchUniformParmas);
 
   useGSAP(() => {
@@ -49,30 +62,24 @@ export const InnerScene = () => {
     });
   });
 
-  useGSAP(
-    () => {
+  /** Sync scroll with camera */
+  useLenis(
+    (l) => {
       if (!cameraRef) return;
-      const p = {
-        progress: 0,
-      };
-      gsap.to(p, {
-        scrollTrigger: {
-          trigger: "body",
-          start: "top top",
-          end: "bottom bottom",
-          scrub: true,
-        },
-        ease: "none",
-        progress: 1,
-        onUpdate: () => {
-          const bodyHeight = document.body.clientHeight;
-          cameraRef.position.y = -p.progress * (bodyHeight / 500);
-        },
-      });
+      const bodyHeight = document.body.scrollHeight;
+      const windowHeight = window.innerHeight;
+      const scrollableVh = bodyHeight / windowHeight;
+
+      const p = l.progress;
+      const initialZ = -0.5;
+      const finalZ = -scrollableVh + 0.5;
+
+      const newY = lerp(initialZ, finalZ, p);
+      cameraRef.position.y = newY;
+
+      DrawPass.uniforms.cameraY.value = newY;
     },
-    {
-      dependencies: [cameraRef],
-    }
+    [cameraRef]
   );
 
   return (
@@ -85,52 +92,81 @@ export const InnerScene = () => {
           }
         }}
         makeDefault
-        fov={40}
-        position={[0, 0, 4]}
+        fov={cameraFov}
+        position={[0, -0.5, calculateCameraDistance(cameraFov, 1)]}
       />
 
+      {/* <mesh position={[0, -0.5, 0]} rotation={[0, 0, 0]}>
+        <meshBasicMaterial color="#f00" />
+        <planeGeometry args={[aspect, 1]} />
+      </mesh>
+
+      <mesh position={[0, -1.5, 0]} rotation={[0, 0, 0]}>
+        <meshBasicMaterial color="#0000ff" />
+        <planeGeometry args={[aspect, 1]} />
+      </mesh>
+
+      <mesh position={[0, -2.5, 0]} rotation={[0, 0, 0]}>
+        <meshBasicMaterial color="green" />
+        <planeGeometry args={[aspect, 1]} />
+      </mesh> */}
+
       <Branch
-        scale={Math.max(1 * aspect, 1.5)}
+        scale={Math.max(aspect * 0.3, 0.5)}
         rotation={[0, 0, Math.PI * -0.03]}
-        position={[-aspect * 1.7, 0.85, 0]}
+        position={[-halfAspect - 0.1, -0.2, 0]}
         variant={0}
         uniforms={bUnifoms}
         branchlets={17}
       />
 
       <Branch
-        scale={Math.max(1 * aspect, 1.5)}
-        rotation={[0, Math.PI, 0]}
-        position={[aspect * 1.5, -0.7, 0]}
-        variant={4}
+        scale={Math.max(aspect * 0.3, 0.4)}
+        rotation={[0, Math.PI, Math.PI * -0.15]}
+        position={[halfAspect, -0.8, 0]}
+        variant={2}
         uniforms={bUnifoms}
         branchlets={17}
       />
 
       <Branch
-        scale={0.8 * aspect}
+        scale={0.3 * aspect}
         rotation={[0, 0, Math.PI * -0.1]}
-        position={[-aspect * 1.48, -2, 0]}
+        position={[-halfAspect, -1.2, 0]}
         variant={3}
         uniforms={bUnifoms}
         branchlets={17}
       />
 
-      <Cat position={[-aspect, -4, 0]} scale={[0.04, 0.04, 0.04]} />
+      <group scale={0.3} position={[-halfAspect + 0.2, -2, 0]}>
+        <Cat position={[0, 0, 0]} />
+        <Cat
+          position={[-0.5, 0, -0.5]}
+          modelPath="/cat3.glb"
+          state="idle"
+          rotation={[0, Math.PI * 0.7, 0]}
+        />
+        <Cat
+          position={[0, 0, -0.5]}
+          modelPath="/cat1.glb"
+          state="sleeping"
+          rotation={[0, Math.PI * 0.5, 0]}
+        />
+      </group>
 
       <Branch
-        scale={0.8 * aspect}
+        scale={0.3 * aspect}
         rotation={[0, Math.PI, 0]}
-        position={[aspect * 1.5, -4, 0]}
-        variant={4}
+        position={[halfAspect, -4, 0]}
+        variant={5}
         uniforms={bUnifoms}
         branchlets={17}
       />
 
       <Branch
-        scale={0.8 * aspect}
+        scale={0.3 * aspect}
         rotation={[0, 0, Math.PI * -0.1]}
-        position={[-aspect * 1.48, -6, 0]}
+        position={[-halfAspect, -6, 0]}
         variant={4}
         uniforms={bUnifoms}
         branchlets={17}

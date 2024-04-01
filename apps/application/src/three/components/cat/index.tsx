@@ -6,12 +6,14 @@ import {
   AnimationClip,
   AnimationMixer,
   NormalAnimationBlendMode,
-  type Object3D,
+  Object3D,
   ShaderMaterial,
   SkinnedMesh,
   Material,
   MeshPhysicalMaterial,
   Color,
+  Group,
+  AnimationObjectGroup,
 } from "three";
 import type { GLTF } from "three-stdlib";
 
@@ -25,33 +27,64 @@ interface CatGLTF extends GLTF {
   animations: AnimationClip[];
 }
 
-useGLTF.preload("/cat2.glb");
+// useGLTF.preload("/cat2.glb");
 
-export const Cat = (props: GroupProps) => {
-  const { nodes, animations } = useGLTF("/cat2.glb") as unknown as CatGLTF;
+export interface CatProps extends GroupProps {
+  state?: "sleeping" | "idle";
+  modelPath?: string;
+}
 
-  const { SceneNode, updateMixer, actions, mixer } = useMemo(() => {
+export const Cat = ({ modelPath, state, ...props }: CatProps) => {
+  const { nodes, animations } = useGLTF(
+    modelPath || "/cat2.glb"
+  ) as unknown as CatGLTF;
+
+  const catId = useMemo(() => {
+    // generate random Id
+    return Math.random().toString(36).substring(7);
+  }, []);
+
+  const { MainNode, updateMixer, actions, mixer } = useMemo(() => {
+    const stateForced = typeof state !== "undefined";
+    /** Perform edits to the cat node, change material and sync animations */
+    const MainNode = nodes.Cat;
+
     // animation mixer
-    const mixer = new AnimationMixer(nodes.Cat);
+    const mixer = new AnimationMixer(MainNode);
 
     // actions
-    const clipPatita = AnimationClip.findByName(animations, "sit-patita");
+    const clipPatita = AnimationClip.findByName(
+      animations,
+      "sit-patita"
+    ).clone();
     const actionPatita = mixer.clipAction(clipPatita);
     actionPatita.repetitions = Infinity;
 
-    const clipSitIdle = AnimationClip.findByName(animations, "sit-idle");
+    const clipSitIdle = AnimationClip.findByName(
+      animations,
+      "sit-idle"
+    ).clone();
     const actionSitIdle = mixer.clipAction(clipSitIdle);
     actionSitIdle.repetitions = Infinity;
+    if (stateForced) {
+      actionSitIdle.setEffectiveTimeScale(0.5);
+    }
 
-    const clipLayDown = AnimationClip.findByName(animations, "lay-down");
+    const clipLayDown = AnimationClip.findByName(
+      animations,
+      "lay-down"
+    ).clone();
     clipLayDown.blendMode = NormalAnimationBlendMode;
     const actionLayDown = mixer.clipAction(clipLayDown);
     actionLayDown.repetitions = 1;
     actionLayDown.clampWhenFinished = true;
 
-    const clipSleep = AnimationClip.findByName(animations, "sleep");
+    const clipSleep = AnimationClip.findByName(animations, "sleep").clone();
     const actionSleep = mixer.clipAction(clipSleep);
     actionSleep.repetitions = Infinity;
+    if (stateForced) {
+      actionSleep.setEffectiveTimeScale(0.5);
+    }
 
     const actions = {
       patita: actionPatita,
@@ -65,37 +98,35 @@ export const Cat = (props: GroupProps) => {
       mixer.update(delta);
     };
 
-    const SkinNode = nodes.Cat.getObjectByName("Object_7") as SkinnedMesh;
-    SkinNode.castShadow = true;
+    const SkinNode = MainNode.getObjectByName("Object_7") as SkinnedMesh;
 
     SkinNode.material = new ShaderMaterial({
       fragmentShader: catBodyFragmentShader,
       vertexShader: catBodyVertexShader,
     });
 
-    const EyesNode = nodes.Cat.getObjectByName("Object_8") as SkinnedMesh;
+    const EyesNode = MainNode.getObjectByName("Object_8") as SkinnedMesh;
     const eyeMaterial = EyesNode.material as MeshPhysicalMaterial;
     eyeMaterial.map = null;
     eyeMaterial.color = new Color("#777");
 
-    const MainNode = nodes.Cat;
-    MainNode.castShadow = true;
-
     return {
-      SceneNode: MainNode,
+      MainNode,
       updateMixer,
       mixer,
       actions,
     };
-  }, [nodes, animations]);
+  }, [nodes, animations, catId]);
 
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
     const isCancelled = signal.aborted;
 
-    let isSleeping = randomItem([true, false]);
-    isSleeping = false;
+    let isSleeping =
+      typeof state === "undefined"
+        ? randomItem([true, false])
+        : state === "sleeping";
     let currentAnimation = isSleeping ? actions.sleep : actions.sitIdle;
 
     const changeAnimation = (newAnimation: AnimationAction) => {
@@ -123,9 +154,11 @@ export const Cat = (props: GroupProps) => {
         if (isCancelled) return;
         setSleep(!isSleeping);
         sleepTicker();
-      }, 90 * 1000);
+      }, 30 * 1000);
     };
-    sleepTicker();
+    if (typeof state === "undefined") {
+      sleepTicker();
+    }
 
     // listen for chain animations
     mixer.addEventListener("finished", (e) => {
@@ -138,15 +171,17 @@ export const Cat = (props: GroupProps) => {
     return () => {
       abortController.abort();
     };
-  }, [actions, mixer]);
+  }, [actions, mixer, state]);
 
   useFrame((_state, delta) => {
     updateMixer(delta);
   });
 
   return (
-    <group scale={[0.1, 0.1, 0.1]} {...props}>
-      <primitive object={SceneNode} />
+    <group {...props}>
+      <group scale={[0.04, 0.04, 0.04]}>
+        <primitive object={MainNode} />
+      </group>
     </group>
   );
 };
