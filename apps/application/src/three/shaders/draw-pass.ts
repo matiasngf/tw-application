@@ -70,7 +70,7 @@ float crossHatch(vec2 uv, float lum) {
 
 
   // Ensure lineWidth is positive and non-zero to avoid division by zero errors
-  float lineWidth = 0.03;
+  float lineWidth = 0.05;
 
   float baseAngle = PI / 0.3; // Base angle of lines
 
@@ -83,7 +83,7 @@ float crossHatch(vec2 uv, float lum) {
       break;
     }
 
-    float angleVariation = valueRemap(lum, 0., 1., 0.95, 1.0);
+    float angleVariation = valueRemap(lum, 0.0, 1.0, 0.99, 1.0);
 
     float angle = baseAngle + (PI * angleVariation) / count * i; // Rotate each set of lines
 
@@ -92,14 +92,13 @@ float crossHatch(vec2 uv, float lum) {
     
     // Calculate line presence with adjusted line width
     float presence = abs(mod(uv.x, 1.0) - 0.5);
-    float line = step(lineWidth, presence); // Control line width via step threshold
+    float line = smoothstep(0.0, lineWidth, presence); // Control line width via step threshold
     line = 1. - line; // Invert line presence
-    lineDensity += line; // Accumulate line presence
+    lineDensity = max(lineDensity, line);
   }
 
   // Normalize line density
-  lineDensity = valueRemap(lineDensity, 0., count, 0., count);
-  lineDensity = clamp(lineDensity, 0., 1.);
+  lineDensity = clamp(lineDensity, 0.0, 1.);
 
   return lineDensity;
 }
@@ -139,18 +138,21 @@ vec3 getDraw2() {
   float hatchFactor = crossHatch(translatedAspectUV * 100., lum);
   float hatch = 1. - hatchFactor;
 
-  float n = cnoise(translatedAspectUV * 900.) * .5 + .5;
+  float n = cnoise(translatedAspectUV * 500.);
+  n = valueRemap(n, -1., 1., 0.0, 0.5);
   float penShade = originalLum + n;
   penShade = clamp(penShade, 0., 1.);
 
-  float f = penShade * hatch;
-
+  
   vec3 penColor;
-
+  
   if(hasColor) {
+    float f = penShade * hatch;
     penColor = mix(texColor.rgb, vec3(1), f);
   } else {
+    float f = penShade;
     penColor = mix(texColor.rgb, vec3(1), f) * hatch;
+    penColor = pow(penColor, vec3(0.5));
   }
 
   return vec3(penColor);
@@ -162,7 +164,7 @@ void main() {
   // DEBUG
   // gl_FragColor.rgb = vec3(lum);
   // gl_FragColor.rgb = vec3(originalLum);
-  // gl_FragColor.rgb = texColor.rgb;
+  // gl_FragColor.rgb = texture2D(baseTexture, vUv).rgb;
   gl_FragColor.a = 1.;
 }
 `
