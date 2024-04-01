@@ -50,7 +50,7 @@ export const InnerScene = () => {
   const [bUnifoms] = useUniforms({
     branchGrowOffset: 0,
     branchRadius: 0.003,
-    progress: 1.5,
+    progress: 0,
   } satisfies BranchUniformParmas);
 
   useGSAP(() => {
