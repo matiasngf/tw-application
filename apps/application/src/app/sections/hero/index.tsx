@@ -19,46 +19,50 @@ export function Hero({ children }: PropsWithChildren) {
 
   useGSAP(
     () => {
-      const tl = gsap.timeline();
-      tl.to("h1 span.letter", {
+      const introTl = gsap.timeline();
+      introTl.to("h1 span.letter", {
         "--tw-translate-y": "0%",
         stagger: 0.02,
         duration: 0.5,
         ease: "power2.out",
       });
 
-      tl.to(
+      introTl.to(
         "hr",
         {
           "--tw-scale-x": "100%",
           duration: 0.5,
           ease: "power2.out",
         },
-        "-=0.45"
+        "-=0.5"
       );
 
-      tl.to("h2", {
-        opacity: 1,
-        duration: 0.5,
-      });
+      introTl.to(
+        "h2",
+        {
+          opacity: 1,
+          duration: 0.5,
+        },
+        "-=0.3"
+      );
 
-      tl.to(
+      introTl.to(
         ".pointer-container",
         {
           opacity: 1,
           duration: 0.5,
         },
-        "-=0.2"
+        "-=0.3"
       );
 
-      tl.to(".eye-container", {
+      introTl.to(".eye-container", {
         "--blink": 1,
         duration: 0.3,
-        delay: 0.7,
+        delay: 0.0,
         ease: "power2.out",
       });
 
-      const revealTl = gsap.timeline({
+      const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: container,
           start: "50px top",
@@ -67,12 +71,12 @@ export function Hero({ children }: PropsWithChildren) {
         },
       });
 
-      revealTl.to(".pointer-container img", {
+      scrollTl.to(".pointer-container img", {
         autoAlpha: 0,
         duration: 0.1,
       });
 
-      revealTl.to(
+      scrollTl.to(
         "h1",
         {
           "--text-scale-max": 2,
@@ -92,7 +96,7 @@ export function Hero({ children }: PropsWithChildren) {
       //   "-=0.5"
       // );
 
-      revealTl.to(
+      scrollTl.to(
         ".about-container",
         {
           y: 0,

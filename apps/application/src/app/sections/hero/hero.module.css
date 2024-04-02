@@ -17,7 +17,7 @@
 
     .dot-shape {
       --scale: 1;
-      @apply block w-full h-full bg-foreground-800 rounded-full relative transition-transform;
+      @apply block w-full h-full bg-foreground-800 rounded-full relative transition-transform duration-300;
       will-change: transform;
       transform: scale(calc(var(--scale) * 1), calc(var(--scale) * 1.7));
     }
