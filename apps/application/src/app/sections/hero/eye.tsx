@@ -8,6 +8,21 @@ import s from "./hero.module.css";
 import { lerp } from "@/transpiled/lerp.emojs";
 import { clx } from "@/hooks/clx";
 
+const getEllipseBoundry = (xScale: number, direction: Vector2) => {
+  const theta = Math.atan2(direction.y, direction.x);
+
+  const r =
+    xScale / Math.sqrt(Math.cos(theta) ** 2 + (xScale * Math.sin(theta)) ** 2);
+
+  return r;
+};
+
+const degToRad = (deg: number) => (deg * Math.PI) / 180;
+
+const eyeAngle = -33;
+const eyeAngleRadians = degToRad(eyeAngle);
+const center = new Vector2(0, 0);
+
 export const Eye = () => {
   const eyePosTarget = useRef({ x: 0, y: 0 });
   const eyePos = useRef({ x: 0, y: 0 });
@@ -51,24 +66,23 @@ export const Eye = () => {
     const rect = dotContainer.getBoundingClientRect();
     centerVec.set(rect.left + rect.width / 2, rect.top + rect.height / 2);
 
-    toMouseVec.copy(mouseVec.sub(centerVec).divide(windowVec).divideScalar(4));
+    toMouseVec.copy(
+      mouseVec.sub(centerVec).divideScalar(window.innerWidth).divideScalar(4)
+    );
     toMouseDir.copy(toMouseVec).normalize();
 
+    // modify length
+    const length = toMouseVec.length();
+    const newL = Math.pow(length, 0.5);
+    toMouseVec.normalize().multiplyScalar(newL);
+
     // limit the eye into an oval shape
-    let ovalFactor = Math.abs(rotationAngle.dot(toMouseDir));
-    ovalFactor = valueRemap(ovalFactor, 0, 1, 0.07, 0.12);
-
-    if (toMouseVec.x < 0) {
-      toMouseVec.x = Math.max(toMouseVec.x, -ovalFactor);
-    } else {
-      toMouseVec.x = Math.min(toMouseVec.x, ovalFactor);
-    }
-
-    if (toMouseVec.y < 0) {
-      toMouseVec.y = Math.max(toMouseVec.y, -ovalFactor);
-    } else {
-      toMouseVec.y = Math.min(toMouseVec.y, ovalFactor);
-    }
+    const ovalLimit =
+      getEllipseBoundry(
+        0.6,
+        toMouseDir.rotateAround(center, -eyeAngleRadians)
+      ) * 0.13;
+    toMouseVec.clampLength(0, ovalLimit);
 
     eyePosTarget.current.x = toMouseVec.x;
     eyePosTarget.current.y = toMouseVec.y;
