@@ -13,7 +13,7 @@
   body {
     @apply text-foreground bg-background;
 
-    &:has(a:hover) {
+    &:has(a:hover, button:hover, a:focus-visible, button:focus-visible) {
       .dot-shape {
         --scale: 1.5 !important;
       }

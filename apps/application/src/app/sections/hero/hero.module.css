@@ -1,3 +1,7 @@
+.header-mask {
+  /* mask-image: linear-gradient(to top, transparent, black); */
+}
+
 .letter-container {
   .dot {
     --translate-x: 0em;

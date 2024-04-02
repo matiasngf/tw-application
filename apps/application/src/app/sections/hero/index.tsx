@@ -1,18 +1,21 @@
 "use client";
 
-import { clx } from "@/hooks/clx";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { PropsWithChildren, useState } from "react";
-import s from "./hero.module.css";
+import { PropsWithChildren, useCallback, useState } from "react";
 import pointerSrc from "@/assets/pointer.png";
 import Image from "next/image";
-import { Eye } from "./eye";
-
-const name = "Matías González Fernández".split("");
+import { HeroTitle } from "./hero-title";
+import { useLenis } from "@studio-freight/react-lenis";
 
 export function Hero({ children }: PropsWithChildren) {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+  const lenis = useLenis();
+
+  const handleHandClick = useCallback(() => {
+    lenis?.scrollTo("h1");
+  }, [lenis]);
 
   useGSAP(
     () => {
@@ -80,6 +83,15 @@ export function Hero({ children }: PropsWithChildren) {
         "0"
       );
 
+      // revealTl.to(
+      //   ".header-container",
+      //   {
+      //     opacity: 1,
+      //     duration: 0.5,
+      //   },
+      //   "-=0.5"
+      // );
+
       revealTl.to(
         ".about-container",
         {
@@ -100,34 +112,25 @@ export function Hero({ children }: PropsWithChildren) {
   return (
     <div ref={setContainer}>
       <div className="mx-auto pt-[40vh] flex items-center cursor-default">
-        <div className="grid gap-6 grid-cols-1 mx-auto text-center">
-          <h1 className="relative text-title text-scale-3xl/7xl overflow-hidden will-change-transform">
-            {name.map((letter, index) => (
-              <span
-                className={clx(
-                  s["letter-container"],
-                  "letter relative inline-block translate-y-[120%] top-[0.2em] whitespace-pre"
-                )}
-                key={index}
-              >
-                {letter === "o" ? <Eye /> : letter}
-              </span>
-            ))}
-          </h1>
+        <div className="grid gap-6 grid-cols-1 mx-auto text-center w-full">
+          <HeroTitle />
           <hr className="w-40 scale-x-0 mx-auto" />
           <h2 className="font-serif text-xl my-2 font-bold text-foreground-800 opacity-0">
             tailwindcss job application
           </h2>
         </div>
       </div>
-      <div className="pointer-container fixed bottom-4 left-1/2 -translate-x-1/2 mix-blend-multiply opacity-0">
+      <button
+        onClick={handleHandClick}
+        className="pointer-container fixed bottom-4 left-1/2 -translate-x-1/2 mix-blend-multiply opacity-0"
+      >
         <Image
           className="rotate-90 -translate-y-full"
           alt=""
           src={pointerSrc}
           width={80}
         />
-      </div>
+      </button>
       <div className="relative about-container invisible opacity-0 translate-y-[0px]">
         {children}
       </div>
