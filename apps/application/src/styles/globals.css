@@ -52,18 +52,16 @@
     & :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
       @apply text-link no-underline;
     }
-    /* 
     h2 {
-      @apply mb-16 text-scale-5xl/8xl tracking-tighter font-normal text-[#484D2A]
-      font-serif leading-none text-center;
-    } */
+      @apply cursor-default;
+    }
 
     hr {
       @apply w-full grow shrink border-t border-foreground-800/50;
     }
 
     h3 {
-      @apply text-scale-2xl/3xl font-serif text-foreground-800;
+      @apply cursor-default text-scale-2xl/3xl font-serif text-foreground-800;
     }
   }
 }

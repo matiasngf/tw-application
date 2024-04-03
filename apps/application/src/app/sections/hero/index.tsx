@@ -87,20 +87,24 @@ export function Hero({ children }: PropsWithChildren) {
         "0"
       );
 
-      // revealTl.to(
-      //   ".header-container",
-      //   {
-      //     opacity: 1,
-      //     duration: 0.5,
-      //   },
-      //   "-=0.5"
-      // );
-
       scrollTl.to(
-        ".about-container",
+        ".content-container",
         {
           y: 0,
           autoAlpha: 1,
+          duration: 0.7,
+          ease: "power2.inOut",
+        },
+        "0"
+      );
+
+      scrollTl.fromTo(
+        "h2",
+        {
+          "--ty": 0,
+        },
+        {
+          "--ty": 5,
           duration: 0.7,
           ease: "power2.inOut",
         },
@@ -119,7 +123,7 @@ export function Hero({ children }: PropsWithChildren) {
         <div className="grid gap-6 grid-cols-1 mx-auto text-center w-full">
           <HeroTitle />
           <hr className="w-40 scale-x-0 mx-auto" />
-          <h2 className="font-serif text-xl my-2 font-bold text-foreground-800 opacity-0">
+          <h2 className="font-serif text-xl my-2 font-bold text-foreground-800 opacity-0 translate-y-[calc(var(--ty,0)*1vh)]">
             tailwindcss job application
           </h2>
         </div>
@@ -135,7 +139,7 @@ export function Hero({ children }: PropsWithChildren) {
           width={80}
         />
       </button>
-      <div className="relative about-container invisible opacity-0 translate-y-[0px]">
+      <div className="mt-[10vh] relative content-container invisible opacity-0">
         {children}
       </div>
     </div>

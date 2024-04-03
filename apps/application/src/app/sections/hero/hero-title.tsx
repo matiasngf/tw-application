@@ -8,8 +8,6 @@ import { useRef } from "react";
 
 const name = "Matías González Fernández".split("");
 
-const headerOffset = 5;
-
 export const HeroTitle = () => {
   const containerRef = useRef<HTMLHeadingElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
@@ -23,11 +21,9 @@ export const HeroTitle = () => {
     ) {
       if (l.scroll > containerRef.current.offsetTop) {
         titleRef.current.style.setProperty("position", "fixed");
-        // titleRef.current.style.setProperty("top", `${headerOffset}px`);
         headerContainerRef.current.style.setProperty("opacity", "1");
       } else {
         titleRef.current.style.setProperty("position", "absolute");
-        // titleRef.current.style.setProperty("top", "0");
         headerContainerRef.current.style.setProperty("opacity", "0");
       }
     }
