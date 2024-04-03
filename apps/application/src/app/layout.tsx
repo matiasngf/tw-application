@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import { LenisProvider } from "./lenis-provider";
+import Script from "next/script";
 
 export default function Layout({ children }: { children: JSX.Element }) {
   return (
@@ -20,6 +21,23 @@ export default function Layout({ children }: { children: JSX.Element }) {
         />
         <meta name="author" content="Matías González Fernández" />
         <title>Matías González Fernández | Job application</title>
+
+        <Script
+          strategy="afterInteractive"
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-67RGZPG93B"
+        ></Script>
+        <Script
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-67RGZPG93B');`,
+          }}
+        ></Script>
       </head>
 
       <body className="bg-background" suppressHydrationWarning>
