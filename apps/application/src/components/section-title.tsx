@@ -11,13 +11,19 @@ export const SectionTitle = ({
 }: PropsWithChildren<SectionTitleProps>) => {
   return (
     <div
-      className={clx("flex items-center space-x-0 justify-center", className)}
+      className={clx(
+        "mb-16 flex items-center space-x-[0.628318em] justify-center text-scale-3xl/5xl",
+        className
+      )}
     >
-      <hr className="w-full grow-1 shrink-1 border-t-1 border-gray-800 hidden relative top-4" />
-      <h2 className="text-scale-2xl/8xl tracking-tighter font-normal text-[#484D2A] shrink-0 grow-0 font-serif leading-none">
+      <hr className="!my-0 relative" />
+      <h2
+        className="relative -top-[0.1em] mb-0 text-[1em] tracking-tighter font-normal
+      font-serif leading-none text-center text-foreground-800"
+      >
         {children}
       </h2>
-      <hr className="w-full grow-1 shrink-1 border-t-1 border-gray-800 hidden relative top-4" />
+      <hr className="!my-0 relative" />
     </div>
   );
 };

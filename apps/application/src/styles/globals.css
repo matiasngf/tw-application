@@ -52,10 +52,14 @@
     & :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
       @apply text-link no-underline;
     }
-
+    /* 
     h2 {
       @apply mb-16 text-scale-5xl/8xl tracking-tighter font-normal text-[#484D2A]
       font-serif leading-none text-center;
+    } */
+
+    hr {
+      @apply w-full grow shrink border-t border-foreground-800/50;
     }
 
     h3 {
