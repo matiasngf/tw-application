@@ -3,6 +3,7 @@ import { About } from "./sections/about";
 import { Why } from "./sections/why";
 import { ThreeCanvas } from "@/three/canvas";
 import { What } from "./sections/what";
+import { Conclusion } from "./sections/conclusion";
 
 export default function Page() {
   return (
@@ -14,6 +15,7 @@ export default function Page() {
         </Hero>
         <Why />
         <What />
+        <Conclusion />
       </main>
     </div>
   );
