@@ -13,9 +13,11 @@ interface BranchletProps {
   uniforms: BranchUniforms;
   t: number;
   texture: Texture;
+  scale: number;
 }
 
 export const Branchlet = ({
+  scale,
   pathVertices,
   uniforms,
   t,
@@ -40,7 +42,12 @@ export const Branchlet = ({
     <>
       <group position={position}>
         <primitive object={branchletMesh} />
-        <Leaf t={t} branchletPath={branchletPath} uniforms={uniforms} />
+        <Leaf
+          scale={scale}
+          t={t}
+          branchletPath={branchletPath}
+          uniforms={uniforms}
+        />
       </group>
     </>
   );

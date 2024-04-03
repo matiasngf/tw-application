@@ -33,6 +33,7 @@
     "tailwindcss-text-scale": "^0.3.0",
     "three": "^0.162.0",
     "three-stdlib": "^2.29.6",
+    "tunnel-rat": "^0.1.2",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

@@ -23,13 +23,14 @@ import { clamp } from "three/src/math/MathUtils.js";
 import { easeOut } from "@/transpiled/ease.emojs";
 
 export interface LeafProps {
+  scale: number;
   branchletPath: PathVertices;
   uniforms: BranchUniforms;
   /** Where in the main branch the branchlet starts */
   t: number;
 }
 
-export const Leaf = ({ branchletPath, uniforms, t }: LeafProps) => {
+export const Leaf = ({ branchletPath, uniforms, t, scale }: LeafProps) => {
   const plantModel = useLoader(
     GLTFLoader,
     "/plant.glb"
@@ -123,7 +124,8 @@ export const Leaf = ({ branchletPath, uniforms, t }: LeafProps) => {
       modelNode.quaternion.premultiply(xQuaternion);
 
       // scale
-      modelNode.scale.setScalar(branchletProgress * 1.5);
+      const s = 1 + scale;
+      modelNode.scale.setScalar((branchletProgress * 2) / s);
 
       // update progress
       prevProgress = currentProgress;
@@ -136,7 +138,7 @@ export const Leaf = ({ branchletPath, uniforms, t }: LeafProps) => {
     return () => {
       abortController.abort();
     };
-  }, [uniforms, branchletPath, t, modelNode]);
+  }, [uniforms, branchletPath, t, modelNode, scale]);
 
   return (
     <group rotation={[0, 0, 0]}>

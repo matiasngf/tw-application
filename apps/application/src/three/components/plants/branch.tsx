@@ -35,7 +35,8 @@ export interface PlantGLTF extends GLTF {
 
 useGLTF.preload("/plant.glb");
 
-export interface BranchProps extends GroupProps {
+export interface BranchProps extends Omit<GroupProps, "scale"> {
+  scale: number;
   variant: number;
   uniforms: BranchUniforms;
   branchlets: number;
@@ -45,6 +46,7 @@ export const Branch = ({
   variant,
   uniforms,
   branchlets,
+  scale,
   ...groupProps
 }: BranchProps) => {
   const plantModel = useLoader(
@@ -90,10 +92,11 @@ export const Branch = ({
 
   return (
     <>
-      <group {...groupProps}>
+      <group {...groupProps} scale={scale}>
         {<primitive object={branchMesh} />}
         {branchletsArr.map((t, i) => (
           <Branchlet
+            scale={scale}
             pathVertices={branchPath.pathVertices}
             uniforms={uniforms}
             texture={branchMap}

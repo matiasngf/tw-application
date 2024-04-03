@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <div>
       <ThreeCanvas />
-      <main className="relative space-y-32 pb-32">
+      <main className="relative space-y-56 pb-32">
         <Hero>
           <About />
         </Hero>

@@ -8,11 +8,13 @@ import { Branch, BranchUniformParmas } from "./components/plants/branch";
 import { useUniforms } from "./hooks/use-uniforms";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { Cat } from "./components/cat";
 import { create } from "zustand";
 import { lerp } from "@/transpiled/lerp.emojs";
 import { useLenis } from "@studio-freight/react-lenis";
 import { DrawPass } from "./shaders/draw-pass";
+import { Cats } from "./components/cats";
+import tunnel from "tunnel-rat";
+import { DesktopPlants } from "./components/desktop-plants";
 
 export interface InnerSceneStore {
   cameraRef: {
@@ -26,7 +28,7 @@ export const useInnerScene = create<InnerSceneStore>(() => ({
   },
 }));
 
-const cameraFov = 40;
+const cameraFov = 30;
 
 function calculateCameraDistance(fovDegrees: number, planeHeight = 1) {
   const fovRadians = (fovDegrees * Math.PI) / 180;
@@ -35,6 +37,8 @@ function calculateCameraDistance(fovDegrees: number, planeHeight = 1) {
   return distance;
 }
 
+export const webGlTunnel = tunnel();
+
 export const InnerScene = () => {
   const aspect = useThree((s) => s.viewport.aspect);
   const halfAspect = useThree((s) => s.viewport.aspect / 2);
@@ -42,7 +46,9 @@ export const InnerScene = () => {
   const lightRef = useRef<SpotLight | null>(null);
   const [cameraRef, setCameraRef] = useState<ThreeCamera | null>(null);
 
-  useFrame(({ camera, scene }) => {
+  const isDesktop = useThree((s) => s.gl.domElement.clientWidth > 1000);
+
+  useFrame(({ scene }) => {
     scene.background = new Color("white");
     lightRef.current?.target.position.set(0, 0, 0);
   });
@@ -96,6 +102,8 @@ export const InnerScene = () => {
         position={[0, -0.5, calculateCameraDistance(cameraFov, 1)]}
       />
 
+      <webGlTunnel.Out />
+
       {/* <mesh position={[0, -0.5, 0]} rotation={[0, 0, 0]}>
         <meshBasicMaterial color="#f00" />
         <planeGeometry args={[aspect, 1]} />
@@ -112,7 +120,7 @@ export const InnerScene = () => {
       </mesh> */}
 
       <Branch
-        scale={Math.max(aspect * 0.3, 0.5)}
+        scale={Math.max(aspect * 0.3, 0.7)}
         rotation={[0, 0, Math.PI * -0.03]}
         position={[-halfAspect - 0.1, -0.2, 0]}
         variant={0}
@@ -120,57 +128,7 @@ export const InnerScene = () => {
         branchlets={17}
       />
 
-      <Branch
-        scale={Math.max(aspect * 0.3, 0.4)}
-        rotation={[0, Math.PI, Math.PI * -0.15]}
-        position={[halfAspect, -0.8, 0]}
-        variant={2}
-        uniforms={bUnifoms}
-        branchlets={17}
-      />
-
-      <Branch
-        scale={0.3 * aspect}
-        rotation={[0, 0, Math.PI * -0.1]}
-        position={[-halfAspect, -1.2, 0]}
-        variant={3}
-        uniforms={bUnifoms}
-        branchlets={17}
-      />
-
-      <group scale={0.3} position={[-halfAspect + 0.2, -2, 0]}>
-        <Cat position={[0, 0, 0]} />
-        <Cat
-          position={[-0.5, 0, -0.5]}
-          modelPath="/cat3.glb"
-          state="idle"
-          rotation={[0, Math.PI * 0.7, 0]}
-        />
-        <Cat
-          position={[0, 0, -0.5]}
-          modelPath="/cat1.glb"
-          state="sleeping"
-          rotation={[0, Math.PI * 0.5, 0]}
-        />
-      </group>
-
-      <Branch
-        scale={0.3 * aspect}
-        rotation={[0, Math.PI, 0]}
-        position={[halfAspect, -4, 0]}
-        variant={5}
-        uniforms={bUnifoms}
-        branchlets={17}
-      />
-
-      <Branch
-        scale={0.3 * aspect}
-        rotation={[0, 0, Math.PI * -0.1]}
-        position={[-halfAspect, -6, 0]}
-        variant={4}
-        uniforms={bUnifoms}
-        branchlets={17}
-      />
+      {isDesktop && <DesktopPlants />}
     </>
   );
 };
