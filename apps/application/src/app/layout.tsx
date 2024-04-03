@@ -28,6 +28,7 @@ export default function Layout({ children }: { children: JSX.Element }) {
           src="https://www.googletagmanager.com/gtag/js?id=G-67RGZPG93B"
         ></Script>
         <Script
+          id="gtag"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
