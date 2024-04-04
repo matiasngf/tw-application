@@ -1,9 +1,13 @@
 import { forwardRef } from "react";
 import { Cat } from "./cat";
 import { Group } from "three";
-import { GroupProps } from "@react-three/fiber";
+import { GroupProps, useThree } from "@react-three/fiber";
 
 export const Cats = forwardRef<Group, GroupProps>((props, ref) => {
+  const isDesktop = useThree((s) => s.gl.domElement.clientWidth > 1000);
+
+  if (!isDesktop) return null;
+
   return (
     <group scale={0.2} position={[100, 0, 0]} {...props} ref={ref}>
       <group position={[0.7, 0, 0]}>
